@@ -34,14 +34,14 @@ function updatePosition() {
   char = expression[position];
 }
 
-while (char) {
+export default function nextToken(char) {
   if (char === " ") {
     updatePosition();
-    continue;
   }
 
   const token = tokenizer();
-  console.log(token);
 
   updatePosition();
+
+  return token;
 }
