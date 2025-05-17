@@ -1,10 +1,19 @@
-const expression = "80 + 5";
+const expression = "8990 + 507 - 33 * 1";
 
 const operators = ["+", "-", "*", "/"];
+let position = 0;
+let char = expression[position];
 
-function tokenizer(char) {
+function tokenizer() {
   if (isNumber(char)) {
-    return { type: "INT", value: char };
+    let num = "";
+
+    while (isNumber(char)) {
+      num += char;
+      updatePosition();
+    }
+
+    return { type: "INT", value: num };
   }
 
   if (isOperator(char)) {
@@ -13,20 +22,26 @@ function tokenizer(char) {
 }
 
 function isNumber(char) {
-  if (Number(char) >= 0) {
-    return true;
-  }
-
-  return false;
+  return char >= "0" && char <= "9";
 }
 
 function isOperator(char) {
   return operators.some((operator) => operator === char);
 }
 
-for (char of expression) {
-  if (char === " ") continue;
+function updatePosition() {
+  position++;
+  char = expression[position];
+}
 
-  const token = tokenizer(char);
+while (char) {
+  if (char === " ") {
+    updatePosition();
+    continue;
+  }
+
+  const token = tokenizer();
   console.log(token);
+
+  updatePosition();
 }
