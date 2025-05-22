@@ -1,4 +1,4 @@
-const expression = "8990 + 507 - 33 * 1";
+const expression = "8 + 5 - 3 * 1";
 
 const operators = ["+", "-", "*", "/"];
 let position = 0;
@@ -34,7 +34,7 @@ function updatePosition() {
   char = expression[position];
 }
 
-export default function nextToken(char) {
+export default function nextToken() {
   if (char === " ") {
     updatePosition();
   }
