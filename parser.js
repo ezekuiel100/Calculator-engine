@@ -1,14 +1,4 @@
-const tokens = [
-  { type: "Number", value: "2" },
-  { type: "Operator", value: "+" },
-  { type: "Number", value: "3" },
-  { type: "Operator", value: "+" },
-  { type: "Number", value: "4" },
-  { type: "Operator", value: "*" },
-  { type: "Number", value: "8" },
-  { type: "Operator", value: "+" },
-  { type: "Number", value: "6" },
-];
+import nextToken from "./tokenizer.js";
 
 const precedence = {
   "+": 1,
@@ -17,39 +7,38 @@ const precedence = {
   "/": 2,
 };
 
-let current = 0;
 let curToken;
 let peekToken;
 
-function nextToken() {
-  curToken = tokens[current];
-  peekToken = tokens[current + 1];
-  current++;
+function NextToken() {
+  curToken = peekToken;
+  peekToken = nextToken();
 }
 
-function parserProgram() {
-  nextToken();
-  let program = [];
+export default function parserProgram() {
+  NextToken();
+  NextToken();
 
+  let program;
   while (curToken) {
-    const node = parseExpression(0);
-    program.push(node);
+    program = parseExpression(0);
 
     if (!peekToken) break;
   }
-
   return program;
 }
 
 function parseExpression(precedence) {
   let left;
 
-  if (curToken.type === "Number") {
+  if (!curToken) return;
+
+  if (curToken?.type === "Number") {
     left = parseNumber(curToken);
   }
 
   while (peekToken && precedence < peekPrecedence()) {
-    nextToken();
+    NextToken();
     left = parseInfix(left);
   }
 
@@ -64,7 +53,7 @@ function parseInfix(left) {
   let operator = curToken.value;
   let operatorPrecedence = curPrecedence();
 
-  nextToken();
+  NextToken();
   const right = parseExpression(operatorPrecedence);
 
   return {
@@ -82,6 +71,3 @@ function peekPrecedence() {
 function curPrecedence() {
   return curToken ? precedence[curToken.value] : 0;
 }
-
-const program = parserProgram();
-console.log(JSON.stringify(program, null, 2));
