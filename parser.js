@@ -6,6 +6,8 @@ const tokens = [
   { type: "Number", value: "4" },
   { type: "Operator", value: "*" },
   { type: "Number", value: "8" },
+  { type: "Operator", value: "+" },
+  { type: "Number", value: "6" },
 ];
 
 const precedence = {
