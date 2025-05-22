@@ -13,11 +13,11 @@ function tokenizer() {
       updatePosition();
     }
 
-    return { type: "INT", value: num };
+    return { type: "Number", value: num };
   }
 
   if (isOperator(char)) {
-    return { type: "OPERATOR", value: char };
+    return { type: "Operator", value: char };
   }
 }
 
