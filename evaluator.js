@@ -1,21 +1,4 @@
-const astNode = {
-  type: "BinaryExpression",
-  operator: "+",
-  left: {
-    type: "BinaryExpression",
-    operator: "+",
-    left: 2,
-    right: 3,
-  },
-  right: {
-    type: "BinaryExpression",
-    operator: "*",
-    left: 4,
-    right: 8,
-  },
-};
-
-function Eval(astNode) {
+export default function Eval(astNode) {
   if (astNode?.type === "BinaryExpression") {
     const left =
       typeof astNode.left === "object" ? Eval(astNode.left) : astNode.left;
@@ -40,6 +23,3 @@ function calculate(left, operator, right) {
       return left / right;
   }
 }
-
-const result = Eval(astNode);
-console.log(result);
