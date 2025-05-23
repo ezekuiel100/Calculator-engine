@@ -1,4 +1,4 @@
-const expression = "-10 + 2";
+const expression = "(-10 + 2) - 1 +4";
 
 const operators = ["+", "-", "*", "/"];
 let position = 0;
@@ -33,17 +33,10 @@ export default function nextToken() {
         lastToken = { type: "Number", value: num };
         return { type: "Number", value: num };
       } else if (isOperator(char)) {
-        if (
-          lastToken === null ||
-          lastToken.type === "Operator" ||
-          lastToken.type === "LeftParen"
-        ) {
-          tok = readNumberWithSign();
-          lastToken = tok;
-          return tok;
-        }
+        tok = readNumberWithSign();
 
-        tok = { type: "Operator", value: char };
+        if (tok === null) tok = { type: "Operator", value: char };
+
         lastToken = tok;
       } else {
         throw new Error(`Token desconhecido: '${char}'`);
@@ -63,19 +56,27 @@ function isOperator(char) {
 }
 
 function readNumberWithSign() {
-  let ch = char;
-  updatePosition();
+  if (
+    lastToken === null ||
+    lastToken.type === "Operator" ||
+    lastToken.type === "LeftParen"
+  ) {
+    let ch = char;
+    updatePosition();
 
-  if (isNumber(char)) {
-    while (isNumber(char)) {
-      ch += char;
-      updatePosition();
+    if (isNumber(char)) {
+      while (isNumber(char)) {
+        ch += char;
+        updatePosition();
+      }
+
+      return { type: "Number", value: ch };
+    } else {
+      throw new Error("Número com sinal inválido");
     }
-
-    return { type: "Number", value: ch };
   }
 
-  throw new Error("Número com sinal inválido");
+  return null;
 }
 
 function updatePosition() {
