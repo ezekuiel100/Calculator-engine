@@ -1,4 +1,4 @@
-const expression = "(-10 + 2) - 1 +4";
+const expression = "(10.8 + 2.5) *  2";
 
 const operators = ["+", "-", "*", "/"];
 let position = 0;
@@ -25,7 +25,7 @@ export default function nextToken() {
       if (isNumber(char)) {
         let num = "";
 
-        while (isNumber(char)) {
+        while (isNumber(char) || char === ".") {
           num += char;
           updatePosition();
         }
