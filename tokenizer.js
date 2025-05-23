@@ -1,4 +1,4 @@
-const expression = "100   + 5 - 3 * 1";
+const expression = "(100   + 5) - 3 * 1";
 
 const operators = ["+", "-", "*", "/"];
 let position = 0;
@@ -18,6 +18,14 @@ function tokenizer() {
 
   if (isOperator(char)) {
     return { type: "Operator", value: char };
+  }
+
+  if (char === "(") {
+    return { type: "LeftParen", value: char };
+  }
+
+  if (char === ")") {
+    return { type: "RightParen", value: char };
   }
 }
 
