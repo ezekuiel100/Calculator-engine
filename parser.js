@@ -29,13 +29,9 @@ export default function parserProgram() {
 }
 
 function parseExpression(precedence) {
-  let left;
+  let left = parsePrefix();
 
   if (!curToken) return;
-
-  if (curToken?.type === "Number") {
-    left = parseNumber(curToken);
-  }
 
   while (peekToken && precedence < peekPrecedence()) {
     NextToken();
@@ -45,8 +41,27 @@ function parseExpression(precedence) {
   return left;
 }
 
-function parseNumber(curToken) {
+function parseNumber() {
   return Number(curToken.value);
+}
+
+function parsePrefix() {
+  if (curToken.type === "Number") {
+    return parseNumber();
+  } else if (curToken.type === "LeftParen") {
+    NextToken();
+    const expr = parseExpression(0);
+
+    NextToken();
+
+    if (curToken?.type !== "RightParen") {
+      throw new Error("Expected ')'");
+    }
+
+    return expr;
+  }
+
+  throw new Error(`Unexpected token: ${curToken?.type}`);
 }
 
 function parseInfix(left) {
