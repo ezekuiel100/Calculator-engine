@@ -1,8 +1,9 @@
-const expression = "(5 + 4) * 1";
+const expression = "(-10 + 4) * 2";
 
 const operators = ["+", "-", "*", "/"];
 let position = 0;
 let char = expression[position];
+let lastToken = null;
 
 export default function nextToken() {
   while (char === " ") {
@@ -29,9 +30,29 @@ export default function nextToken() {
           updatePosition();
         }
 
+        lastToken = { type: "Number", value: num };
         return { type: "Number", value: num };
       } else if (isOperator(char)) {
+        if (
+          lastToken === null ||
+          lastToken.type === "Operator" ||
+          lastToken.type === "LeftParen"
+        ) {
+          let ch = char;
+          updatePosition();
+
+          while (isNumber(char)) {
+            ch += char;
+            updatePosition();
+          }
+
+          tok = { type: "Number", value: ch };
+          lastToken = tok;
+          return tok;
+        }
+
         tok = { type: "Operator", value: char };
+        lastToken = tok;
       } else {
         throw new Error(`Token desconhecido: '${char}'`);
       }
