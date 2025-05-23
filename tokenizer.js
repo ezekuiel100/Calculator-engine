@@ -1,4 +1,4 @@
-const expression = "8 + 5 - 3 * 1";
+const expression = "100   + 5 - 3 * 1";
 
 const operators = ["+", "-", "*", "/"];
 let position = 0;
@@ -35,7 +35,7 @@ function updatePosition() {
 }
 
 export default function nextToken() {
-  if (char === " ") {
+  while (char === " ") {
     updatePosition();
   }
 
