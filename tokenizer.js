@@ -1,4 +1,4 @@
-const expression = "(10,89 + 2) - 3";
+const expression = "(-10,89 + 2) - 3";
 
 const operators = ["+", "-", "*", "/"];
 let position = 0;
@@ -76,10 +76,7 @@ function readNumberWithSign() {
     updatePosition();
 
     if (isNumber(char)) {
-      while (isNumber(char)) {
-        ch += char;
-        updatePosition();
-      }
+      ch = getNumber();
 
       return { type: "Number", value: ch };
     } else {
