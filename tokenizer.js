@@ -1,93 +1,96 @@
-const expression = "(-10,89 + 2) - 3";
-
 const operators = ["+", "-", "*", "/"];
-let position = 0;
-let char = expression[position];
-let lastToken = null;
 
-export default function nextToken() {
-  while (char === " ") {
+export default function createTokenizer(expression) {
+  let position = 0;
+  let char = expression[position];
+  let lastToken = null;
+
+  function nextToken() {
+    while (char === " ") {
+      updatePosition();
+    }
+
+    if (!char) return null;
+
+    let tok;
+
+    switch (char) {
+      case "(":
+        tok = { type: "LeftParen", value: char };
+        break;
+      case ")":
+        tok = { type: "RightParen", value: char };
+        break;
+      default:
+        if (isNumber(char)) {
+          const num = getNumber();
+          lastToken = { type: "Number", value: num };
+
+          return { type: "Number", value: num };
+        } else if (isOperator(char)) {
+          tok = readNumberWithSign();
+
+          if (tok === null) tok = { type: "Operator", value: char };
+
+          lastToken = tok;
+        } else {
+          throw new Error(`Token desconhecido: '${char}'`);
+        }
+    }
+
     updatePosition();
+    return tok;
   }
 
-  if (!char) return null;
+  function isNumber(char) {
+    return char >= "0" && char <= "9";
+  }
 
-  let tok;
+  function isOperator(char) {
+    return operators.some((operator) => operator === char);
+  }
 
-  switch (char) {
-    case "(":
-      tok = { type: "LeftParen", value: char };
-      break;
-    case ")":
-      tok = { type: "RightParen", value: char };
-      break;
-    default:
-      if (isNumber(char)) {
-        const num = getNumber();
-        lastToken = { type: "Number", value: num };
+  function getNumber() {
+    let number = "";
 
-        return { type: "Number", value: num };
-      } else if (isOperator(char)) {
-        tok = readNumberWithSign();
-
-        if (tok === null) tok = { type: "Operator", value: char };
-
-        lastToken = tok;
+    while (isNumber(char) || char === "." || char === ",") {
+      if (char === ",") {
+        number += ".";
       } else {
-        throw new Error(`Token desconhecido: '${char}'`);
+        number += char;
       }
-  }
 
-  updatePosition();
-  return tok;
-}
-
-function isNumber(char) {
-  return char >= "0" && char <= "9";
-}
-
-function isOperator(char) {
-  return operators.some((operator) => operator === char);
-}
-
-function getNumber() {
-  let number = "";
-
-  while (isNumber(char) || char === "." || char === ",") {
-    if (char === ",") {
-      number += ".";
-    } else {
-      number += char;
+      updatePosition();
     }
 
-    updatePosition();
+    return number;
   }
 
-  return number;
-}
+  function readNumberWithSign() {
+    if (
+      lastToken === null ||
+      lastToken.type === "Operator" ||
+      lastToken.type === "LeftParen"
+    ) {
+      let ch = char;
+      updatePosition();
 
-function readNumberWithSign() {
-  if (
-    lastToken === null ||
-    lastToken.type === "Operator" ||
-    lastToken.type === "LeftParen"
-  ) {
-    let ch = char;
-    updatePosition();
+      if (isNumber(char)) {
+        ch = getNumber();
 
-    if (isNumber(char)) {
-      ch = getNumber();
-
-      return { type: "Number", value: ch };
-    } else {
-      throw new Error("Número com sinal inválido");
+        return { type: "Number", value: ch };
+      } else {
+        throw new Error("Número com sinal inválido");
+      }
     }
+
+    return null;
   }
 
-  return null;
-}
+  function updatePosition() {
+    position++;
+    char = expression[position];
+  }
 
-function updatePosition() {
-  position++;
-  char = expression[position];
+  return { nextToken };
 }
