@@ -1,4 +1,4 @@
-const expression = "(10.8 + 2)";
+const expression = "(10,89 + 2) - 3";
 
 const operators = ["+", "-", "*", "/"];
 let position = 0;
@@ -23,18 +23,9 @@ export default function nextToken() {
       break;
     default:
       if (isNumber(char)) {
-        let num = "";
-
-        while (isNumber(char) || char === "." || char === ",") {
-          if (char === ",") {
-            char.replace(".");
-          }
-
-          num += char;
-          updatePosition();
-        }
-
+        const num = getNumber();
         lastToken = { type: "Number", value: num };
+
         return { type: "Number", value: num };
       } else if (isOperator(char)) {
         tok = readNumberWithSign();
@@ -57,6 +48,22 @@ function isNumber(char) {
 
 function isOperator(char) {
   return operators.some((operator) => operator === char);
+}
+
+function getNumber() {
+  let number = "";
+
+  while (isNumber(char) || char === "." || char === ",") {
+    if (char === ",") {
+      number += ".";
+    } else {
+      number += char;
+    }
+
+    updatePosition();
+  }
+
+  return number;
 }
 
 function readNumberWithSign() {
