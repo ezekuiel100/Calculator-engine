@@ -1,32 +1,44 @@
-const expression = "(100   + 5) - 3 * 1";
+const expression = "(5 + 4) * 1";
 
 const operators = ["+", "-", "*", "/"];
 let position = 0;
 let char = expression[position];
 
-function tokenizer() {
-  if (isNumber(char)) {
-    let num = "";
-
-    while (isNumber(char)) {
-      num += char;
-      updatePosition();
-    }
-
-    return { type: "Number", value: num };
+export default function nextToken() {
+  while (char === " ") {
+    updatePosition();
   }
 
-  if (isOperator(char)) {
-    return { type: "Operator", value: char };
+  if (!char) return null;
+
+  let tok;
+
+  switch (char) {
+    case "(":
+      tok = { type: "LeftParen", value: char };
+      break;
+    case ")":
+      tok = { type: "RightParen", value: char };
+      break;
+    default:
+      if (isNumber(char)) {
+        let num = "";
+
+        while (isNumber(char)) {
+          num += char;
+          updatePosition();
+        }
+
+        return { type: "Number", value: num };
+      } else if (isOperator(char)) {
+        tok = { type: "Operator", value: char };
+      } else {
+        throw new Error(`Token desconhecido: '${char}'`);
+      }
   }
 
-  if (char === "(") {
-    return { type: "LeftParen", value: char };
-  }
-
-  if (char === ")") {
-    return { type: "RightParen", value: char };
-  }
+  updatePosition();
+  return tok;
 }
 
 function isNumber(char) {
@@ -40,16 +52,4 @@ function isOperator(char) {
 function updatePosition() {
   position++;
   char = expression[position];
-}
-
-export default function nextToken() {
-  while (char === " ") {
-    updatePosition();
-  }
-
-  const token = tokenizer();
-
-  updatePosition();
-
-  return token;
 }
