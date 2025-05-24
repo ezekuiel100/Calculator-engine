@@ -11,7 +11,6 @@ export default function createTokenizer(expression) {
     }
 
     if (!char) return null;
-
     let tok;
 
     switch (char) {
@@ -25,19 +24,23 @@ export default function createTokenizer(expression) {
         if (isNumber(char)) {
           const num = getNumber();
           lastToken = { type: "Number", value: num };
-
           return { type: "Number", value: num };
         } else if (isOperator(char)) {
           tok = readNumberWithSign();
 
-          if (tok === null) tok = { type: "Operator", value: char };
+          if (tok === null) {
+            tok = { type: "Operator", value: char };
+            updatePosition();
+          }
 
           lastToken = tok;
+          return tok;
         } else {
           throw new Error(`Token desconhecido: '${char}'`);
         }
     }
 
+    lastToken = tok;
     updatePosition();
     return tok;
   }
@@ -59,7 +62,6 @@ export default function createTokenizer(expression) {
       } else {
         number += char;
       }
-
       updatePosition();
     }
 
@@ -75,15 +77,14 @@ export default function createTokenizer(expression) {
       let ch = char;
       updatePosition();
 
+      while (char === " ") updatePosition();
+
       if (isNumber(char)) {
-        ch = getNumber();
+        ch += getNumber();
 
         return { type: "Number", value: ch };
-      } else {
-        throw new Error("Número com sinal inválido");
       }
     }
-
     return null;
   }
 
