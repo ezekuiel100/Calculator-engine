@@ -1,4 +1,4 @@
-import nextToken from "./tokenizer.js";
+import createTokenizer from "./tokenizer.js";
 
 const precedence = {
   "+": 1,
@@ -10,9 +10,11 @@ const precedence = {
 let curToken;
 let peekToken;
 
+const tokenizer = createTokenizer("1 + 5 * 3");
+
 function NextToken() {
   curToken = peekToken;
-  peekToken = nextToken();
+  peekToken = tokenizer.nextToken();
 }
 
 export default function parserProgram() {
